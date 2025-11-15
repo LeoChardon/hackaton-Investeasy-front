@@ -54,15 +54,23 @@ export default function MarketSection({
       </div>
       <div className="rounded-2xl border-[var(--border)] bg-[var(--card)] p-6">
         <h2 className="text-xl font-semibold text-white mb-3">Target & purchasing power</h2>
-        <ul className="text-zinc-300 space-y-2">
-          {targetDetails.map((insight) =>
-            insight.value ? (
-              <li key={insight.label} className="flex items-start gap-2">
-                <span className="text-zinc-300">{insight.value}</span>
-              </li>
-            ) : null,
-          )}
-        </ul>
+        {loading ? (
+          <div className="space-y-3">
+            {[...Array(3)].map((_, index) => (
+              <Skeleton key={index} className="h-4 w-full last:w-5/6" />
+            ))}
+          </div>
+        ) : (
+          <ul className="text-zinc-300 space-y-2">
+            {targetDetails.map((insight) =>
+              insight.value ? (
+                <li key={insight.label} className="flex items-start gap-2">
+                  <span className="text-zinc-300">{insight.value}</span>
+                </li>
+              ) : null,
+            )}
+          </ul>
+        )}
       </div>
     </section>
   )

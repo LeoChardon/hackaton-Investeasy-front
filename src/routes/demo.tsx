@@ -21,6 +21,7 @@ const rawBackendUrl =
     : undefined)
 
 const backendUrl = rawBackendUrl?.replace(/^['"]|['"]$/g, '').trim().replace(/\/$/, '')
+const GOOGLE_SLIDES_ICON = 'https://www.google.com/s2/favicons?sz=64&domain=docs.google.com'
 
 export const Route = createFileRoute('/demo')({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -38,6 +39,7 @@ function DemoPage() {
   const [analysis, setAnalysis] = useState<AnalyzeResult | null>(null)
   const [analysisLoading, setAnalysisLoading] = useState(false)
   const [exportingPdf, setExportingPdf] = useState(false)
+  const [exportingSlides, setExportingSlides] = useState(false)
   const [displayedSummary, setDisplayedSummary] = useState('')
   const typewriterTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
   const rawSummary = analysis?.summary?.trim() ?? ''
@@ -191,21 +193,77 @@ function DemoPage() {
     }
   }
 
+  const handleGenerateSlides = async () => {
+    if (!analysis || !backendUrl || exportingSlides) return
+
+    try {
+      setExportingSlides(true)
+      const response = await fetch(`${backendUrl}/export/slide`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(analysis),
+      })
+
+      if (!response.ok) {
+        console.error('Slide export failed', await response.text().catch(() => 'Unknown error'))
+        return
+      }
+
+      const contentType = response.headers.get('content-type') ?? ''
+      if (contentType.includes('application/json')) {
+        const payload = (await response.json().catch(() => null)) as
+          | { url?: string; link?: string; presentationUrl?: string }
+          | null
+        const presentationUrl = payload?.presentationUrl ?? payload?.url ?? payload?.link
+        if (presentationUrl) {
+          window.open(presentationUrl, '_blank', 'noopener,noreferrer')
+        } else {
+          console.warn('Slide export response missing presentation URL', payload)
+        }
+      } else {
+        const blob = await response.blob()
+        const blobUrl = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = blobUrl
+        link.download = `analysis-${Date.now()}.slides`
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+        URL.revokeObjectURL(blobUrl)
+      }
+    } catch (error) {
+      console.error('Slide export error', error)
+    } finally {
+      setExportingSlides(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[var(--surface)] text-zinc-100">
       <div className="mx-auto w-full px-4 sm:px-6 lg:px-10 py-10">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
           <div className="self-stretch lg:w-80 lg:flex-shrink-0 lg:sticky lg:left-0 lg:top-8">
             <AgentTimeline loading={analysisLoading} runKey={reloadKey} />
-            <button
-              type="button"
-              onClick={handleDownloadPdf}
-              disabled={!analysis || exportingPdf}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-2 text-sm font-medium text-white transition hover:border-indigo-500 hover:text-indigo-200 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <Download size={16} />
-              {exportingPdf ? 'Generating PDF…' : 'Download PDF'}
-            </button>
+            <div className="mt-4 flex flex-col gap-3">
+              <button
+                type="button"
+                onClick={handleDownloadPdf}
+                disabled={!analysis || exportingPdf}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-2 text-sm font-medium text-white transition hover:border-indigo-500 hover:text-indigo-200 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <Download size={16} />
+                {exportingPdf ? 'Generating PDF…' : 'Download PDF'}
+              </button>
+              <button
+                type="button"
+                onClick={handleGenerateSlides}
+                disabled={!analysis || exportingSlides}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-2 text-sm font-medium text-white transition hover:border-yellow-500/60 hover:text-yellow-200 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <img src={GOOGLE_SLIDES_ICON} alt="Google Slides logo" className="h-4 w-4" />
+                {exportingSlides ? 'Generating Slides…' : 'Generate Google Slide'}
+              </button>
+            </div>
           </div>
 
           <div className="space-y-8 flex-1 w-full">
@@ -224,7 +282,7 @@ function DemoPage() {
               targetInsights={analysis?.target ?? TARGET_INSIGHTS}
             />
 
-            <Positioning text={analysis?.positioning} />
+            <Positioning text={analysis?.positioning} loading={analysisLoading} />
 
             <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <Score
@@ -232,7 +290,11 @@ function DemoPage() {
                 scoreValue={analysis?.score?.value}
                 scoreReason={analysis?.score?.reason}
               />
-              <Profitability data={analysis?.profitability} />
+              <Profitability
+                data={analysis?.profitability}
+                loading={analysisLoading}
+                hasError={Boolean(analysis) && !analysis?.profitability}
+              />
               <CompetitorsSection loading={analysisLoading} competitors={analysis?.competitors} />
             </section>
 

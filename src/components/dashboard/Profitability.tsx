@@ -8,6 +8,8 @@ type ProfitMetric = {
 
 type ProfitabilityProps = {
   data?: ProfitabilityInsight | null
+  loading?: boolean
+  hasError?: boolean
 }
 
 const fallbackProfitability: ProfitabilityInsight = {
@@ -21,7 +23,36 @@ const formatPercent = (value: number | undefined) =>
 const formatMonths = (value: number | undefined) =>
   typeof value === 'number' ? `~${value} mo` : 'N/A'
 
-export default function Profitability({ data }: ProfitabilityProps) {
+export default function Profitability({ data, loading, hasError }: ProfitabilityProps) {
+  if (loading) {
+    return (
+      <div className="rounded-2xl border-[var(--border)] bg-[var(--card)] p-6">
+        <div className="mb-4 h-6 w-32 animate-pulse rounded bg-zinc-800/70" />
+        <div className="grid grid-cols-2 gap-4">
+          {[...Array(2)].map((_, index) => (
+            <div key={index} className="rounded-xl border-[var(--border)] bg-[var(--surface)] p-4">
+              <div className="h-4 w-24 animate-pulse rounded bg-zinc-800/70" />
+              <div className="mt-3 h-6 w-20 animate-pulse rounded bg-zinc-800/70" />
+              <div className="mt-2 h-3 w-32 animate-pulse rounded bg-zinc-800/70" />
+            </div>
+          ))}
+        </div>
+        <div className="mt-5 rounded-xl border-[var(--border)] bg-[var(--surface)] p-4">
+          <div className="h-4 w-20 animate-pulse rounded bg-zinc-800/70" />
+          <div className="mt-3 h-16 w-full animate-pulse rounded bg-zinc-800/70" />
+        </div>
+      </div>
+    )
+  }
+
+  if (hasError) {
+    return (
+      <div className="rounded-2xl border-[var(--border)] bg-[var(--card)] p-6 text-center text-sm text-zinc-400">
+        No information
+      </div>
+    )
+  }
+
   const profitability = data ?? fallbackProfitability
   const metrics: ProfitMetric[] = [
     { label: 'Projected ROI', value: formatPercent(profitability.roi_percentage) },
@@ -35,7 +66,7 @@ export default function Profitability({ data }: ProfitabilityProps) {
   return (
     <div className="rounded-2xl border-[var(--border)] bg-[var(--card)] p-6">
       <h2 className="text-xl font-semibold text-white mb-4">Profitability</h2>
-      <div className="grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         {metrics.map((metric) => (
           <div key={metric.label} className="rounded-xl border-[var(--border)] bg-[var(--surface)] p-4">
             <div className="text-sm text-zinc-400">{metric.label}</div>
