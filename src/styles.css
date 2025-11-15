@@ -1,0 +1,25 @@
+/* Theme CSS variables for surfaces/borders */
+:root {
+  color-scheme: dark;
+  --surface: #050505; /* global background */
+  --card: #0d0d0d;    /* card backgrounds */
+  --border: #27272a;  /* separators */
+}
+
+@import "tailwindcss";
+
+body {
+  @apply m-0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--surface);
+  color: #e5e7eb;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
