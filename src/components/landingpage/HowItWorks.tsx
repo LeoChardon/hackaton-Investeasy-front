@@ -1,6 +1,6 @@
 export default function HowItWorks() {
   const steps = [
-    { title: '1. Describe or paste URL', desc: 'Enter your idea or your landing page URL.' },
+    { title: '1. Describe or paste URL', desc: 'Enter your idea.' },
     { title: '2. We analyze the market', desc: 'We detect competitors and benchmark positioning.' },
     { title: '3. Get feasibility & score', desc: 'Receive a clear success score backed by data.' },
     { title: '4. Decide and iterate', desc: 'Use insights to refine your idea and go faster.' },

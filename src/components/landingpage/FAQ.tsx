@@ -63,10 +63,6 @@ export default function FAQ() {
       a: "We combine idea type, market size, niche and industry signals to produce a clear success score.",
     },
     {
-      q: "Can I analyze my landing page?",
-      a: "Yes. We benchmark your page against competitors to clarify positioning and gaps.",
-    },
-    {
       q: "Where does the data come from?",
       a: "We aggregate publicly available signals and up-to-date market references. No sensitive data required.",
     },

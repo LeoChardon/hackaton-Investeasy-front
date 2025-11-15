@@ -448,7 +448,6 @@ function DemoPage() {
 
 
 
-            <Agents />
           </div>
         </div>
       </div>

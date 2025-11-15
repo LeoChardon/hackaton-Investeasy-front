@@ -9,10 +9,6 @@ export default function Features() {
       desc: 'Get a clear, data-backed score based on idea type, market size, and industry.',
     },
     {
-      title: 'Landing Page Analysis',
-      desc: 'Benchmark your positioning by analyzing competitor pages — and your own.',
-    },
-    {
       title: 'Actionable Insights',
       desc: 'Understand market traction and profitability to decide what to build next.',
     },
