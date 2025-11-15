@@ -1,57 +1,32 @@
-import { useEffect, useState } from 'react'
 import { Check } from 'lucide-react'
 
-const TIMELINE_STEPS = [
-  'Understanding idea',
-  'Market Analysis',
-  'Competitor research',
-  'Scoring',
-  'Generating report',
-  'Creating audio summary',
-  'Sync with Notion (n8n)',
+export type TimelineStepKey = 'idea' | 'market' | 'score' | 'competitor' | 'similar'
+export type TimelineStepStatus = 'idle' | 'in-progress' | 'completed'
+export type TimelineStatusMap = Record<TimelineStepKey, TimelineStepStatus>
+
+const TIMELINE_STEPS: { key: TimelineStepKey; label: string }[] = [
+  { key: 'idea', label: 'Understanding idea' },
+  { key: 'market', label: 'Market Analysis' },
+  { key: 'score', label: 'Scoring' },
+  { key: 'similar', label: 'Similar unicorns research' },
+  { key: 'competitor', label: 'Competitor research' },
 ]
 
 type AgentTimelineProps = {
-  loading?: boolean
-  runKey?: number
+  statusMap?: Partial<TimelineStatusMap>
 }
 
-const STEP_DELAY = 420
+const DEFAULT_STATUS: TimelineStatusMap = {
+  idea: 'idle',
+  market: 'idle',
+  score: 'idle',
+  competitor: 'idle',
+  similar: 'idle',
+}
 
-export default function AgentTimeline({ loading = false, runKey = 0 }: AgentTimelineProps) {
-  const [visibleCount, setVisibleCount] = useState(0)
-
-  useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout> | null = null
-    let currentStep = 0
-
-    const schedule = () => {
-      timeout = setTimeout(() => {
-        currentStep += 1
-        setVisibleCount(Math.min(currentStep, TIMELINE_STEPS.length))
-
-        if (currentStep < TIMELINE_STEPS.length) {
-          schedule()
-        } else if (loading) {
-          timeout = setTimeout(() => {
-            currentStep = 0
-            setVisibleCount(0)
-            schedule()
-          }, STEP_DELAY)
-        }
-      }, STEP_DELAY)
-    }
-
-    setVisibleCount(0)
-    currentStep = 0
-    schedule()
-
-    return () => {
-      if (timeout) clearTimeout(timeout)
-    }
-  }, [loading, runKey])
-
-  const completedCount = Math.min(visibleCount, TIMELINE_STEPS.length)
+export default function AgentTimeline({ statusMap }: AgentTimelineProps) {
+  const mergedStatus = { ...DEFAULT_STATUS, ...statusMap }
+  const completedCount = TIMELINE_STEPS.filter((step) => mergedStatus[step.key] === 'completed').length
   const progressRatio = TIMELINE_STEPS.length ? completedCount / TIMELINE_STEPS.length : 0
 
   return (
@@ -75,18 +50,23 @@ export default function AgentTimeline({ loading = false, runKey = 0 }: AgentTime
         />
 
         <ul className="space-y-4">
-          {TIMELINE_STEPS.map((step, index) => {
-            const isCompleted = index < completedCount
-            const status = loading && index === completedCount ? 'In progress' : isCompleted ? 'Completed' : 'Queued task'
+          {TIMELINE_STEPS.map((step) => {
+            const status = mergedStatus[step.key]
+            const isCompleted = status === 'completed'
+            const isInProgress = status === 'in-progress'
+            const statusLabel =
+              status === 'completed' ? 'Completed' : status === 'in-progress' ? 'In progress' : 'Queued task'
 
             return (
-              <li key={step} className="relative flex items-start gap-4">
+              <li key={step.key} className="relative flex items-start gap-4">
                 <div className="relative">
                   <span
                     className={`flex h-6 w-6 items-center justify-center rounded-full border text-sm transition-all duration-500 ${
                       isCompleted
                         ? 'border-pink-500 bg-pink-500 text-white'
-                        : 'border-zinc-700 text-zinc-600'
+                        : isInProgress
+                          ? 'border-pink-400 text-pink-400'
+                          : 'border-zinc-700 text-zinc-600'
                     }`}
                   >
                     <Check size={14} />
@@ -95,12 +75,12 @@ export default function AgentTimeline({ loading = false, runKey = 0 }: AgentTime
                 <div>
                   <p
                     className={`font-medium transition-colors duration-500 ${
-                      isCompleted ? 'text-white' : 'text-zinc-500'
+                      isCompleted ? 'text-white' : isInProgress ? 'text-pink-200' : 'text-zinc-500'
                     }`}
                   >
-                    {step}
+                    {step.label}
                   </p>
-                  <p className="text-xs text-zinc-500">{status}</p>
+                  <p className="text-xs text-zinc-500">{statusLabel}</p>
                 </div>
               </li>
             )

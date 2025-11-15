@@ -1,4 +1,4 @@
-import type { ProfitabilityInsight } from '@/lib/type'
+import type { Profitability as ProfitabilityType } from '@/lib/type'
 
 type ProfitMetric = {
   label: string
@@ -7,12 +7,12 @@ type ProfitMetric = {
 }
 
 type ProfitabilityProps = {
-  data?: ProfitabilityInsight | null
+  data?: ProfitabilityType | null
   loading?: boolean
   hasError?: boolean
 }
 
-const fallbackProfitability: ProfitabilityInsight = {
+const fallbackProfitability: ProfitabilityType = {
   roi_percentage: 38,
   timeframe_months: 12,
   reason: 'Recurring SaaS revenues with balanced CAC/LTV typically drive break-even inside the first year.',
@@ -48,7 +48,7 @@ export default function Profitability({ data, loading, hasError }: Profitability
   if (hasError) {
     return (
       <div className="rounded-2xl border-[var(--border)] bg-[var(--card)] p-6 text-center text-sm text-zinc-400">
-        No information
+        no information
       </div>
     )
   }

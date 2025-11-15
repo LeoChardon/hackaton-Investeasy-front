@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
+import type { ScoreComputationResponse } from '@/lib/type'
 
 type ScoreProps = {
   loading: boolean
-  scoreValue?: number
-  scoreReason?: string
+  result?: ScoreComputationResponse | null
 }
 
 function Skeleton({ className }: { className?: string }) {
@@ -68,10 +68,12 @@ function ScoreRing({ value, size = 160, stroke = 14 }: { value: number; size?: n
   )
 }
 
-export default function Score({ loading, scoreValue, scoreReason }: ScoreProps) {
+export default function Score({ loading, result }: ScoreProps) {
+  const scoreValue = result?.score?.value
   const normalizedScore = typeof scoreValue === 'number' ? Math.max(0, Math.min(100, scoreValue)) : null
   const description =
-    scoreReason ??
+    result?.score?.reason ??
+    result?.weight_explanation ??
     'Based on market size, entry barriers, competition density, and clarity of value proposition.'
 
   return (

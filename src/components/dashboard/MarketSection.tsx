@@ -1,13 +1,13 @@
-import { TargetInsight } from "@/lib/type"
+import type { TargetAudience } from '@/lib/type'
 
 export type MarketSectionProps = {
   loading: boolean
   summary: string
   isTyping?: boolean
-  targetInsights?: TargetInsight
+  targetInsights?: TargetAudience
 }
 
-const defaultInsights: TargetInsight = {
+const defaultInsights: TargetAudience = {
   segment: 'ICP',
   purchasing_power: 'Early-stage founders, indie builders, micro funds',
   justification: 'Willingness to pay between 19 and 79 per month driven by speed-to-signal needs.',

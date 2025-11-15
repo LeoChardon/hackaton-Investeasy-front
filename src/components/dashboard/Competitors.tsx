@@ -1,8 +1,4 @@
-type Competitor = {
-  name: string
-  landing_page: string
-  logo_url?: string
-}
+import type { Competitor } from '@/lib/type'
 
 type CompetitorsProps = {
   loading: boolean
@@ -31,30 +27,40 @@ export default function Competitors({ loading, competitors }: CompetitorsProps) 
               </li>
             ))
           : hasCompetitors && competitors
-            ? competitors.map((competitor) => (
-                <li key={competitor.name} className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3 min-w-0">
-                    {competitor.logo_url ? (
-                      <img
-                        src={competitor.logo_url}
-                        alt={`${competitor.name} logo`}
-                        className="h-10 w-10 rounded-full object-cover border-[var(--border)] bg-zinc-900"
-                      />
+            ? competitors.map((competitor) => {
+                const landingPage = competitor.landing_page || '#'
+                const isDisabled = !competitor.landing_page
+                return (
+                  <li key={competitor.name} className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                      {competitor.logo_url ? (
+                        <img
+                          src={competitor.logo_url}
+                          alt={`${competitor.name} logo`}
+                          className="h-10 w-10 rounded-full object-cover border-[var(--border)] bg-zinc-900"
+                        />
+                      ) : (
+                        <div className="h-10 w-10 rounded-full bg-zinc-800" />
+                      )}
+                      <span className="text-white truncate">{competitor.name}</span>
+                    </div>
+                    {isDisabled ? (
+                      <span className="inline-flex items-center justify-center rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-2 text-sm font-medium text-indigo-300 opacity-60">
+                        URL missing
+                      </span>
                     ) : (
-                      <div className="h-10 w-10 rounded-full bg-zinc-800" />
+                      <a
+                        href={landingPage}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center justify-center rounded-full border border-indigo-500/40 bg-indigo-500/10 px-4 py-2 text-sm font-medium text-indigo-300 hover:border-indigo-300 hover:bg-indigo-500/20"
+                      >
+                        Show website
+                      </a>
                     )}
-                    <span className="text-white truncate">{competitor.name}</span>
-                  </div>
-                  <a
-                    href={competitor.landing_page}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center justify-center rounded-full border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-600 hover:bg-indigo-100 border-indigo-500/40 bg-indigo-500/10 text-indigo-300"
-                  >
-                    Show website
-                  </a>
-                </li>
-              ))
+                  </li>
+                )
+              })
             : (
                 <li className="text-sm text-zinc-400">No competitors detected yet.</li>
               )}
