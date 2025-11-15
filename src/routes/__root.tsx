@@ -37,17 +37,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="bg-[var(--surface)] text-zinc-600">
         {children}
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+       
         <Scripts />
       </body>
     </html>
