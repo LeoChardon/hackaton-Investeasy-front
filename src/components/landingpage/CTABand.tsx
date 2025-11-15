@@ -26,15 +26,11 @@ export default function CTABand() {
         </div> */}
         <form onSubmit={onSubmit} className="w-full">
           <div className="relative mx-auto w-full md:max-w-3xl lg:max-w-4xl">
-            <LinkIcon
-              size={18}
-              className="pointer-events-none absolute left-4 top-5 text-zinc-500"
-              aria-hidden="true"
-            />
+
             <textarea
               rows={5}
               aria-label="Startup idea or landing page URL"
-              placeholder="Describe your startup idea or paste a landing page URL... What problem do you solve? Who is the audience?"
+              placeholder="Describe your startup idea... What problem do you solve?"
               name="input"
               className="w-full min-h-40 md:min-h-44 rounded-2xl border-[var(--border)] bg-zinc-900 pl-12 pr-44 py-4 text-lg text-white placeholder-zinc-500 shadow-sm ring-1 ring-[var(--border)] focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y"
               onInput={(e) => {

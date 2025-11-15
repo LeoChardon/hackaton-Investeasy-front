@@ -7,7 +7,9 @@ type Props = {
 export default function Header({ title, subtitle, tagline }: Props) {
   return (
     <section id="home" className="relative isolate overflow-hidden bg-[var(--surface)]">
-<div className="mx-auto max-w-7xl px-6 pt-10 sm:pt-14 lg:px-8">
+      {/* <div className="hero-glow-bg pointer-events-none fixed left-1/2 top-1/2 -z-10 h-[60rem] w-[60rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl" /> */}
+
+<div className="mx-auto max-w-7xl px-6 pt-24 sm:pt-32 lg:px-8">
 
         <div className="mx-auto max-w-3xl text-center">
           <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">

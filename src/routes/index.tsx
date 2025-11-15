@@ -11,6 +11,7 @@ import Pricing from '@/components/landingpage/Pricing'
 import FAQ from '@/components/landingpage/FAQ'
 import CTABand from '@/components/landingpage/CTABand'
 import Footer from '@/components/landingpage/Footer'
+import HeroBackdrop from '@/components/landingpage/HeroBackdrop'
 
 export const Route = createFileRoute('/')({
   component: Landing,
@@ -24,17 +25,18 @@ function Landing() {
     'Investeasy enables investors and founders to immediately determine whether a startup idea is bankable and has real market potential.'
 
   return (
-    <div className="min-h-screen bg-[var(--surface)] text-zinc-100">
-      <Navbar />
-      <Header title={title} subtitle={subtitle} tagline={tagline} />
-      <CTABand />
-      <TrustBar />
-      <PainSolution />
-      <Features />
-      <About />
-      <HowItWorks />
-      <FAQ />
-      <Footer />
+<div className="relative isolate min-h-screen bg-[var(--surface)]">
+      <HeroBackdrop />
+        <Navbar />
+        <Header title={title} subtitle={subtitle} tagline={tagline} />
+        <CTABand />
+        <TrustBar />
+        <PainSolution />
+        <Features />
+        <About />
+        <HowItWorks />
+        <FAQ />
+        <Footer />
     </div>
   )
 }
